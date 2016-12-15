@@ -2,7 +2,7 @@ var express = require('express');
 var router = express.Router();
 
 var monk = require('monk');
-var db = monk('localhost:27017/vidzy');
+var db = monk('nikhsmith:laya2006@ds133328.mlab.com:33328/videomgmt');
 
 router.get('/', function(req, res) {
     var collection = db.get('videos');
