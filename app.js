@@ -8,6 +8,10 @@ var bodyParser = require('body-parser');
 var routes = require('./routes/index');
 var users = require('./routes/users');
 var videos = require('./routes/videos');
+
+var passport = require('passport');
+var LocalStategy = require('passport-local').Strategy;
+
 var app = express();
 
 // view engine setup
@@ -25,6 +29,9 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', routes);
 app.use('/users', users);
 app.use('/api/videos', videos);
+
+app.use(passport.initialize());
+app.use(passport.session());
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
