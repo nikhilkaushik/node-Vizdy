@@ -30,7 +30,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
-app.use(session({secret :'test secret'}));
+app.use(session({secret :'test secret', cookie: {maxAge: 60000},resave: true, saveUninitialized: true}));
 app.use(flash());
 app.use(passport.initialize());
 app.use(passport.session());
@@ -52,18 +52,15 @@ passport.use(new LocalStrategy(function(username, password, done){
     Users.findOne({ username : username}, function(err,user) {
         if(err) {return done(err); }
         if(!user) {
+            console.log("invalid user");    
             return done(null, false, {message : 'Incorrect username'});
         }
-       /* var hash = crypto.createHash('sha1');
-        hash.update(password);
-        var result = hash.digest('hex');
-        if (result == user.password){
-            return done(null, user._id);
+        if (password == user.password){
+            console.log(" Pwd matches ");
+            return done(null, user);
         }else {
             done(null, false, {message: 'Incorrect password' });
-        }*/
-            console.log(user.username);
-            return done(null,user);     
+        }
     });    
 }));
 
