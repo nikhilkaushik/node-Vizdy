@@ -88,8 +88,8 @@ app.get('/logout', function(req, res){
 
 app.post('/login', passport.authenticate('local', {successRedirect: '/',
                                                    failureRedirect: '/login',
-                                                   failureFlash: true,
-                                                   successFlash: "Welcome"}));
+                                                   failureFlash: true
+                                                   }));
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
