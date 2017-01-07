@@ -13,7 +13,6 @@ var videos = require('./routes/videos');
 
 var session = require('express-session');
 var flash = require('connect-flash');
-//var crypto = require('crypto');
 var passport = require('passport');
 var LocalStrategy = require('passport-local').Strategy;
 
@@ -43,7 +42,7 @@ app.use(function(req,res,next){
 
 
 app.use('/', routes);
-app.use('/users', users);
+app.use('/', users);
 app.use('/api/videos', videos);
 
 var Users = db.get('users');
@@ -73,20 +72,6 @@ passport.deserializeUser(function(user,done){
         console.log("deserialize "+user.username);
         done(null, user);
 });
-
-app.get('/login', function(req,res){
-        return res.render('login');
-});
-
-app.get('/logout', function(req, res){
-        req.logout();
-        res.redirect('/');
-});
-
-app.post('/login', passport.authenticate('local', {successRedirect: '/',
-                                                   failureRedirect: '/login',
-                                                   failureFlash: true
-                                                   }));
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
