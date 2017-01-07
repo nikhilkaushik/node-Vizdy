@@ -6,6 +6,7 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var monk = require('monk');
 var db = monk('localhost:27017/vidzy');
+// var db = monk('nikhsmith:laya2006@ds133328.mlab.com:33328/videomgmt');
 
 var routes = require('./routes/index');
 var users = require('./routes/users');
@@ -105,5 +106,4 @@ app.use(function(err, req, res, next) {
 });
 
 
-//module.exports = routes;
 module.exports = app;
