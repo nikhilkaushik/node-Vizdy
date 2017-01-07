@@ -4,13 +4,18 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
+var monk = require('monk');
+var db = monk('localhost:27017/vidzy');
 
 var routes = require('./routes/index');
 var users = require('./routes/users');
 var videos = require('./routes/videos');
 
+var session = require('express-session');
+var flash = require('connect-flash');
+//var crypto = require('crypto');
 var passport = require('passport');
-var LocalStategy = require('passport-local').Strategy;
+var LocalStrategy = require('passport-local').Strategy;
 
 var app = express();
 
@@ -25,13 +30,66 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(session({secret :'test secret'}));
+app.use(flash());
+app.use(passport.initialize());
+app.use(passport.session());
+
+//Make the db accessible to our router
+app.use(function(req,res,next){
+        req.db = db;
+        next();
+});
+
 
 app.use('/', routes);
 app.use('/users', users);
 app.use('/api/videos', videos);
 
-app.use(passport.initialize());
-app.use(passport.session());
+var Users = db.get('users');
+
+passport.use(new LocalStrategy(function(username, password, done){
+    Users.findOne({ username : username}, function(err,user) {
+        if(err) {return done(err); }
+        if(!user) {
+            return done(null, false, {message : 'Incorrect username'});
+        }
+       /* var hash = crypto.createHash('sha1');
+        hash.update(password);
+        var result = hash.digest('hex');
+        if (result == user.password){
+            return done(null, user._id);
+        }else {
+            done(null, false, {message: 'Incorrect password' });
+        }*/
+            console.log(user.username);
+            return done(null,user);     
+    });    
+}));
+
+passport.serializeUser(function(user,done){
+        console.log("In serialize user"+user.username);
+        done(null, user);
+});
+
+passport.deserializeUser(function(user,done){
+        console.log("deserialize "+user.username);
+        done(null, user);
+});
+
+app.get('/login', function(req,res){
+        return res.render('login');
+});
+
+app.get('/logout', function(req, res){
+        req.logout();
+        res.redirect('/');
+});
+
+app.post('/login', passport.authenticate('local', {successRedirect: '/',
+                                                   failureRedirect: '/login',
+                                                   failureFlash: true,
+                                                   successFlash: "Welcome"}));
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
@@ -65,4 +123,5 @@ app.use(function(err, req, res, next) {
 });
 
 
+//module.exports = routes;
 module.exports = app;
