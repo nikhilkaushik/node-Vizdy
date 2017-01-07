@@ -9,4 +9,18 @@ html(ng-app='Vidzy1')
     script(src='/javascripts/vidzy.js' )
     link(rel='stylesheet', href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css')
   body
+   .container
+     .header
+       ul.nav.nav-pills.pull-right
+         li
+         if user
+           li
+             User #{user.username}
+            li
+              a(href='/logout') Logout
+          else
+            li
+              a(href='/login') Login
+            li
+              a(href='/register') Register 
     block content
