@@ -7,24 +7,30 @@ router.get('/register', function(req, res, next) {
   res.render('register');
 });
 
-/*
-router.post('/register', function(req,res){
-    console.log("**********In Post register");
+
+router.post('/register', function(req,res){                                                                       
+    var username = req.body.username;
+    var password = req.body.password;
+    var email = req.body.email;
+
+    // Grab user fields.
+    if (!username || !password || !email) {
+            return res.render('register', { title: 'Register', error: 'All fields are required.' });
+     }
     var collection = req.db.get('users');
     collection.insert({
-        username : req.body.username,
-        passport: req.body.password
-    }, function(err, newuser){
-            if (err) throw err;
-           /* passport.authenticate('local', (req, res, function(){
-                res.redirect('/');
+        username : username,
+        password : password,
+        email : email    
+    },function(err, createduser){
+            if(err) return res.render('register',{ title: 'Register', error : err.userMessage});
+/*            passport.authenticate('local', (req,res,function(){
+                return res.redirect('/');
             }));*/
-        /*    console.log("before auth");
-            passport.authenticate('local', {successRedirect: '/', failureRedirect: '/register', failureFlash:true});
-            });
-            console.log("after auth");
-});
-*/
+            return res.redirect('/login');
+    });
+    
+});    
 
 router.get('/login', function(req,res){
        // console.log(req.flash('error')[0]);

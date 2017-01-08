@@ -49,7 +49,7 @@ app.use('/api/videos', videos);
 var Users = db.get('users');
 
 passport.use(new LocalStrategy(function(username, password, done){
-    Users.findOne({ username : username}, function(err,user) {
+        Users.findOne({ username : username}, function(err,user) {
         if(err) {return done(err); }
         if(!user) {
             console.log("invalid user");    
