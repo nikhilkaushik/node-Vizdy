@@ -1,16 +1,18 @@
 var express = require('express');
 var router = express.Router();
 
-//var monk = require('monk');
+var monk = require('monk');
 // var db = monk('nikhsmith:laya2006@ds133328.mlab.com:33328/videomgmt');
 
 //var db = monk('localhost:27017/vidzy');
 
 
 router.get('/', function(req, res) {
+    console.log("In get all videos " +req.user.username);    
     var collection = req.db.get('videos');
-    collection.find({}, function(err, videos){
-        if (err) throw err;
+    //collection.find({owners: [monk.id(req.user._id)]}, function(err, videos){
+    collection.find( {"owners" : {"$in": [collection.id(req.user._id)]}},function(err,videos){
+            if (err) throw err;
       	res.json(videos);
     });
 });
